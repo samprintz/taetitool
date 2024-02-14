@@ -2,6 +2,7 @@ import csv
 import re
 from datetime import datetime, timedelta
 
+from config import Style, project_print_order
 from model.issue import Issue
 from model.taeti import Taeti
 
@@ -127,21 +128,29 @@ def group_taetis(taetis):
     return group_taetis_by({}, taetis, ['project', 'task', 'issue_description', 'issue_id'])
 
 
-def print_grouped_taetis(by_project):
-    for project, project_group in by_project.items():
-        print(f'{project_group["time"]} {project}')
+def print_project_group(title, project_group):
+    print(f'{Style.PROJECT}{project_group["time"]} {title}{Style.ENDC}')
 
-        for task, task_group in project_group['grouped_taetis'].items():
-            if task:
-                print(f'\t{task_group["time"]} {task}')
+    for task, task_group in project_group['grouped_taetis'].items():
+        if task:
+            print(f'\t{task_group["time"]} {task}')
 
-            for issue_description, issue_description_group in task_group['grouped_taetis'].items():
-                if issue_description:
-                    print(f'\t\t{issue_description_group["time"]} {issue_description}')
+        for issue_description, issue_description_group in task_group['grouped_taetis'].items():
+            if issue_description:
+                print(f'\t\t{issue_description_group["time"]} {issue_description}')
 
-                for issue_id, issue_id_group in issue_description_group['grouped_taetis'].items():
-                    if issue_id:
-                        print(f'\t\t\t{issue_id_group["time"]} #{issue_id}')
+            for issue_id, issue_id_group in issue_description_group['grouped_taetis'].items():
+                if issue_id:
+                    print(f'\t\t\t{issue_id_group["time"]} #{issue_id}')
 
-                    for taeti in issue_id_group['taetis']:
-                        print(f'\t\t\t\t{str(taeti)}')
+                for taeti in issue_id_group['taetis']:
+                    print(f'\t\t\t\t{Style.ISSUE}{str(taeti)}{Style.ENDC}')
+
+
+def print_grouped_taetis(grouped_taetis):
+    for project in project_print_order:
+        project_group = grouped_taetis.pop(project)
+        print_project_group(project, project_group)
+
+    for project, project_group in grouped_taetis.items():
+        print_project_group(project, project_group)
