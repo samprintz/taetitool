@@ -5,7 +5,7 @@ from datetime import datetime
 from model.issue import Issue
 from model.taeti import Taeti
 
-TAETI_DESCRIPTION_PATTERN = '(^#(\\d{1,4})\\s)?(.*)'
+TAETI_DESCRIPTION_PATTERN = '(^#(\\d{1,4})\\s?)?(.*)?'
 
 
 def read_project_data(path, default_project):
@@ -15,7 +15,9 @@ def read_project_data(path, default_project):
             super(DefaultKeyDict, self).__init__(*args, **kwargs)
 
         def __missing__(self, key):
-            return self.default_key
+            issue = self.default_key
+            issue.id = key
+            return issue
 
     project_data = {}
 
@@ -89,3 +91,11 @@ def build_taetis(taeti_data, project_data):
         taetis.append(taeti)
 
     return taetis
+
+
+def set_special_projects_and_tasks(taetis, assignments):
+    for assignment in assignments:
+        filtered_taetis = [t for t in taetis if assignment['function'](t)]
+        for taeti in filtered_taetis:
+            taeti.project = assignment['project']
+            taeti.task = assignment['task']
