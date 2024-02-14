@@ -101,51 +101,45 @@ def set_special_projects_and_tasks(taetis, assignments):
             taeti.task = assignment['task']
 
 
-def group_taetis_by(taetis, attribute):
-    grouped = {}
+def group_taetis_by(grouped_taetis, taetis, attributes):
+    attribute, *attributes = attributes
 
     for taeti in taetis:
         key = getattr(taeti, attribute)
-        if key not in grouped:
-            grouped[key] = {
+        if key not in grouped_taetis:
+            grouped_taetis[key] = {
                 'taetis': [],
+                'grouped_taetis': {},
                 'time': timedelta(0)
             }
 
-        grouped[key]['taetis'].append(taeti)
-        grouped[key]['time'] = grouped[key]['time'] + taeti.time_span
+        grouped_taetis[key]['taetis'].append(taeti)
+        grouped_taetis[key]['time'] = grouped_taetis[key]['time'] + taeti.time_span
 
-    return grouped
+    if len(attributes) > 0:
+        for key, group in grouped_taetis.items():
+            group_taetis_by(group['grouped_taetis'], group['taetis'], attributes)
+
+    return grouped_taetis
 
 
 def group_taetis(taetis):
-    by_project = group_taetis_by(taetis, 'project')
-    for project, group in by_project.items():
-        by_task = group_taetis_by(by_project[project]['taetis'], 'task')
-        for task, group in by_task.items():
-            by_description = group_taetis_by(by_task[task]['taetis'], 'issue_description')
-            for description, group in by_description.items():
-                by_issue_id = group_taetis_by(by_description[description]['taetis'], 'issue_id')
-                by_description[description]['taetis'] = by_issue_id
-            by_task[task]['taetis'] = by_description
-        by_project[project]['taetis'] = by_task
-
-    return by_project
+    return group_taetis_by({}, taetis, ['project', 'task', 'issue_description', 'issue_id'])
 
 
 def print_grouped_taetis(by_project):
     for project, project_group in by_project.items():
         print(f'{project_group["time"]} {project}')
 
-        for task, task_group in project_group['taetis'].items():
+        for task, task_group in project_group['grouped_taetis'].items():
             if task:
                 print(f'\t{task_group["time"]} {task}')
 
-            for description, description_group in task_group['taetis'].items():
-                if description:
-                    print(f'\t\t{description_group["time"]} {description}')
+            for issue_description, issue_description_group in task_group['grouped_taetis'].items():
+                if issue_description:
+                    print(f'\t\t{issue_description_group["time"]} {issue_description}')
 
-                for issue_id, issue_id_group in description_group['taetis'].items():
+                for issue_id, issue_id_group in issue_description_group['grouped_taetis'].items():
                     if issue_id:
                         print(f'\t\t\t{issue_id_group["time"]} #{issue_id}')
 
