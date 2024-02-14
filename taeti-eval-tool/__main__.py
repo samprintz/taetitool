@@ -24,7 +24,7 @@ default_project = config.get("default", "default_project")
 default_task = config.get("default", "default_task")
 support_task = config.get("default", "support_task")
 
-project_data = util.read_project_data(project_data_file_path, default_project)
+project_data = util.read_project_data(project_data_file_path, default_project, default_task)
 taeti_data = util.read_taeti_data(args.file)
 
 if len(taeti_data) == 0:
@@ -33,7 +33,6 @@ if len(taeti_data) == 0:
 
 taetis = util.build_taetis(taeti_data, project_data)
 util.set_special_projects_and_tasks(taetis, project_assignments)
-
-project_taetis = [t for t in taetis if t.issue_id is not None and t.project not in [default_project, support_task]]
+taetis_by_project = util.group_taetis(taetis)
 
 print(taetis)

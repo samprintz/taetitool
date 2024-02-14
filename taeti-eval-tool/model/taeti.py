@@ -9,6 +9,7 @@ class Taeti:
     def __init__(self, time_start, time_end, description, issue=None):
         self.time_start = time_start
         self.time_end = time_end
+        self.time_span = time_end - time_start
         self.description = description
         self.issue_id = None
         self.issue_description = None
