@@ -131,3 +131,23 @@ def group_taetis(taetis):
         by_project[project]['taetis'] = by_task
 
     return by_project
+
+
+def print_grouped_taetis(by_project):
+    for project, project_group in by_project.items():
+        print(f'{project_group["time"]} {project}')
+
+        for task, task_group in project_group['taetis'].items():
+            if task:
+                print(f'\t{task_group["time"]} {task}')
+
+            for description, description_group in task_group['taetis'].items():
+                if description:
+                    print(f'\t\t{description_group["time"]} {description}')
+
+                for issue_id, issue_id_group in description_group['taetis'].items():
+                    if issue_id:
+                        print(f'\t\t\t{issue_id_group["time"]} #{issue_id}')
+
+                    for taeti in issue_id_group['taetis']:
+                        print(f'\t\t\t\t{str(taeti)}')

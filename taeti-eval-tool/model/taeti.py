@@ -23,7 +23,10 @@ class Taeti:
             self.task = issue.task
 
     def __str__(self):
-        return f'{format_time(self.time_start)}\t{format_time(self.time_end)}\t{self.issue_id}\t{self.description}'
+        if self.issue_id:
+            return f'{format_time(self.time_start)} - {format_time(self.time_end)} #{self.issue_id} {self.description}'
+        else:
+            return f'{format_time(self.time_start)} - {format_time(self.time_end)} {self.description}'
 
     def __repr__(self):
         return f'Taeti({self.issue_id}, \'{self.description}\', {format_time(self.time_start)}, {format_time(self.time_end)})'

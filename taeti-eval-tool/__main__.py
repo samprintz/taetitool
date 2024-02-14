@@ -34,5 +34,4 @@ if len(taeti_data) == 0:
 taetis = util.build_taetis(taeti_data, project_data)
 util.set_special_projects_and_tasks(taetis, project_assignments)
 taetis_by_project = util.group_taetis(taetis)
-
-print(taetis)
+util.print_grouped_taetis(taetis_by_project)
