@@ -14,7 +14,7 @@ def main():
     parser.add_argument("file",
                         help="Taeti file to evaluate")
     parser.add_argument("--config",
-                        default="../config.ini",
+                        default="~/.config/taetitool/config.ini",
                         help="configuration file")
 
     args = parser.parse_args()
