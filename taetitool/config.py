@@ -1,6 +1,6 @@
 import re
 
-break_re = re.compile('Break|^Private:.*')
+break_re = re.compile('Mittagspause|^Privat.*')
 meeting_re = re.compile('Daily|Weekly|Sprint Retrospektive|Product Management Round Table')
 
 project_assignments = [
@@ -11,12 +11,12 @@ project_assignments = [
     },
     {
         'function': lambda taeti: meeting_re.match(taeti.description),
-        'project': 'Internal tasks',
-        'task': 'Meeting'
+        'project': 'Interne Tätigkeiten',
+        'task': 'Abstimmung'
     },
     {
         'function': lambda taeti: taeti.project == 'Support',
-        'project': "External tasks",
+        'project': "Externe Tätigkeiten",
         'task': 'Support'
     }
 ]

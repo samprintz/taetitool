@@ -5,6 +5,7 @@ from configparser import ConfigParser
 import util
 from config import project_assignments
 
+
 parser = ArgumentParser(prog='taeti',
                         description='Taeti Evaluation Tool')
 
@@ -25,7 +26,8 @@ default_task = config.get("default", "default_task")
 support_task = config.get("default", "support_task")
 
 date = util.parse_date(args.file)
-project_data = util.read_project_data(project_data_file_path, default_project,
+project_data = util.read_project_data(project_data_file_path,
+                                      default_project,
                                       default_task)
 taeti_data = util.read_taeti_data(args.file)
 
