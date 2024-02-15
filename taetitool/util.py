@@ -8,7 +8,7 @@ from taetitool.model.taeti import Taeti
 
 TAETI_DESCRIPTION_PATTERN = '(^#(\\d{1,4})\\s?)?(.*)?'
 FILE_NAME_DATE_FORMAT = '%Y%m%d'
-PRINT_DATE_FORMAT = '%d.%m.%Y'
+PRINT_DATE_FORMAT = '%A, %d.%m.%Y'
 
 
 def parse_date(path):
@@ -88,17 +88,18 @@ def read_taeti_data(path):
 
     with open(path, 'r') as file:
         for i, line in enumerate(file):
-            # split by two or more whitespace characters
-            col = re.split('\\s\\s+', line)
-            if len(col) < 3:
-                raise Exception(f'Corrupt entry in line {i}: "{line}"')
-            time_start, time_end, description = col
+            if len(line.strip()):
+                # split by two or more whitespace characters
+                col = re.split('\\s\\s+', line)
+                if len(col) < 3:
+                    raise Exception(f'Corrupt entry in line {i + 1}: "{line}"')
+                time_start, time_end, description = col
 
-            taeti_data.append({
-                'time_start': parse_time(time_start),
-                'time_end': parse_time(time_end),
-                'description': description.strip()
-            })
+                taeti_data.append({
+                    'time_start': parse_time(time_start),
+                    'time_end': parse_time(time_end),
+                    'description': description.strip()
+                })
 
     return taeti_data
 
@@ -173,41 +174,43 @@ def group_taetis(taetis):
 
 
 def print_project_group(title, project_group):
-    print(f'{Style.PROJECT}{format_timedelta_quarterly(project_group["time"])} '
-          f'{title}{Style.ENDC}')
+    print(
+        f'{Style.UNDERLINE}{format_timedelta_quarterly(project_group["time"])} '
+        f'{title}{Style.END}')
 
     for task, task_group in project_group['grouped_taetis'].items():
         if task:
-            print(f'\t{format_timedelta(task_group["time"])} {task}')
+            print(f'  {format_timedelta(task_group["time"])} {task}')
 
         for issue_description, issue_description_group in task_group[
             'grouped_taetis'].items():
             if issue_description:
                 print(
-                    f'\t\t{format_timedelta(issue_description_group["time"])} '
+                    f'    {format_timedelta(issue_description_group["time"])} '
                     f'{issue_description}')
 
             for issue_id, issue_id_group in issue_description_group[
                 'grouped_taetis'].items():
                 if issue_id:
-                    print(f'\t\t\t{format_timedelta(issue_id_group["time"])} '
+                    print(f'      {format_timedelta(issue_id_group["time"])} '
                           f'#{issue_id}')
 
                 for taeti in issue_id_group['taetis']:
-                    print(f'\t\t\t\t{Style.ISSUE}{str(taeti)}{Style.ENDC}')
+                    print(f'        {Style.GREY}{str(taeti)}{Style.END}')
 
 
 def print_taetis(date, total_times, grouped_taetis):
-    print(f'{Style.BOLD}{date}{Style.ENDC}')
+    print(f'{Style.BOLD}{date}{Style.END}')
 
     day_start_time, day_end_time, day_total_time = total_times
     print(f'{Style.BOLD}{format_time(day_start_time)} - '
-          f'{format_time(day_end_time)}{Style.ENDC} '
-          f'({format_timedelta(day_total_time)})\n')
+          f'{format_time(day_end_time)}{Style.END} '
+          f'({format_timedelta_quarterly(day_total_time)})\n')
 
     for project in project_print_order:
-        project_group = grouped_taetis.pop(project)
-        print_project_group(project, project_group)
+        if project in grouped_taetis:
+            project_group = grouped_taetis.pop(project)
+            print_project_group(project, project_group)
 
     for project, project_group in grouped_taetis.items():
         print_project_group(project, project_group)
