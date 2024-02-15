@@ -2,9 +2,9 @@ import csv
 import re
 from datetime import datetime, timedelta
 
-from config import Style, project_print_order
-from model.issue import Issue
-from model.taeti import Taeti
+from taetitool.config import Style, project_print_order
+from taetitool.model.issue import Issue
+from taetitool.model.taeti import Taeti
 
 TAETI_DESCRIPTION_PATTERN = '(^#(\\d{1,4})\\s?)?(.*)?'
 FILE_NAME_DATE_FORMAT = '%Y%m%d'
