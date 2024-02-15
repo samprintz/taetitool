@@ -1,4 +1,5 @@
 #!/usr/bin/env python
+import os.path
 from argparse import ArgumentParser
 from configparser import ConfigParser
 
@@ -18,15 +19,29 @@ def main():
 
     args = parser.parse_args()
 
+    config_path = os.path.expanduser(args.config)
+    taeti_file_path = os.path.expanduser(args.file)
+
+    if not os.path.isfile(taeti_file_path):
+        print(f'Taeti data file not found: "{taeti_file_path}"')
+        exit(0)
+
+    if not os.path.isfile(config_path):
+        print(f'Configuration file not found: "{config_path}"')
+        exit(0)
+
     config = ConfigParser()
-    config.read(args.config)
+    config.read(config_path)
 
     project_data_file_path = config.get("default", "project_data_file")
     default_project = config.get("default", "default_project")
     default_task = config.get("default", "default_task")
-    support_task = config.get("default", "support_task")
 
-    date = util.parse_date(args.file)
+    if not os.path.isfile(project_data_file_path):
+        print(f'Project data file not found: "{project_data_file_path}"')
+        exit(0)
+
+    date = util.parse_date(taeti_file_path)
     project_data = util.read_project_data(project_data_file_path,
                                           default_project,
                                           default_task)
