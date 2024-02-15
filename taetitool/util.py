@@ -2,7 +2,7 @@ import csv
 import re
 from datetime import datetime, timedelta
 
-from taetitool.config import Style, project_print_order
+from taetitool.config import Style
 from taetitool.model.issue import Issue
 from taetitool.model.taeti import Taeti
 
@@ -104,8 +104,32 @@ def read_taeti_data(path):
     return taeti_data
 
 
+def parse_assignment_rules(rules):
+    rule_names = set()
+    for option, _ in rules:
+        rule_name = option.split('_')[1]
+        rule_names.add(rule_name)
+
+    rule_fields = ['attribute', 'pattern', 'project', 'task']
+
+    assigment_rules = []
+    for rule_name in rule_names:
+        assigment_rule = {
+            'name': rule_name
+        }
+
+        for rule_field in rule_fields:
+            rule_field_value = next(
+                (y for x, y in rules if rule_name in x and rule_field in x),
+                None)
+            assigment_rule[rule_field] = rule_field_value
+
+        assigment_rules.append(assigment_rule)
+
+    return assigment_rules
+
+
 def build_taetis(taeti_data, project_data):
-    # TODO merge read_taeti_data()?
     taetis = []
 
     for taeti_entry in taeti_data:
@@ -128,12 +152,14 @@ def build_taetis(taeti_data, project_data):
     return taetis
 
 
-def set_special_projects_and_tasks(taetis, assignments):
-    for assignment in assignments:
-        filtered_taetis = [t for t in taetis if assignment['function'](t)]
-        for taeti in filtered_taetis:
-            taeti.project = assignment['project']
-            taeti.task = assignment['task']
+def apply_assignment_rules(taetis, rules):
+    for rule in rules:
+        pattern = re.compile(rule['pattern'])
+        for taeti in taetis:
+            attribute = getattr(taeti, rule['attribute'])
+            if attribute and pattern.match(attribute):
+                taeti.project = rule['project']
+                taeti.task = rule['task']
 
 
 def get_total_times(taetis):
@@ -199,7 +225,7 @@ def print_project_group(title, project_group):
                     print(f'        {Style.GREY}{str(taeti)}{Style.END}')
 
 
-def print_taetis(date, total_times, grouped_taetis):
+def print_taetis(date, total_times, grouped_taetis, project_print_order):
     print(f'{Style.BOLD}{date}{Style.END}')
 
     day_start_time, day_end_time, day_total_time = total_times

@@ -4,7 +4,6 @@ from argparse import ArgumentParser
 from configparser import ConfigParser
 
 import taetitool.util as util
-from taetitool.config import project_assignments
 
 
 def main():
@@ -36,6 +35,7 @@ def main():
     project_data_file_path = config.get("default", "project_data_file")
     default_project = config.get("default", "default_project")
     default_task = config.get("default", "default_task")
+    project_print_order = config.get("output", "project_print_order")
 
     if not os.path.isfile(project_data_file_path):
         print(f'Project data file not found: "{project_data_file_path}"')
@@ -51,11 +51,13 @@ def main():
         print(f'No taeti records found')
         exit(0)
 
+    assignment_rules = util.parse_assignment_rules(config.items('rules'))
+
     taetis = util.build_taetis(taeti_data, project_data)
-    util.set_special_projects_and_tasks(taetis, project_assignments)
+    util.apply_assignment_rules(taetis, assignment_rules)
     grouped_taetis = util.group_taetis(taetis)
     total_times = util.get_total_times(taetis)
-    util.print_taetis(date, total_times, grouped_taetis)
+    util.print_taetis(date, total_times, grouped_taetis, project_print_order)
 
 
 if __name__ == "__main__":
