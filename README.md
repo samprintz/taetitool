@@ -6,6 +6,12 @@
 python setup.py install
 ```
 
+For development use:
+
+```sh
+python setup.py develop
+```
+
 ## Configuration
 
 1. Default location for configuration file `config.ini` is `.config/taetitool/config.ini`. Another location can be specified with `--config`.
