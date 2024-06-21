@@ -91,7 +91,7 @@ def read_taeti_data(path):
             if len(line.strip()):
                 # split by two or more whitespace characters
                 col = re.split('\\s\\s+', line)
-                if len(col) < 3:
+                if len(col) != 3:
                     raise Exception(f'Corrupt entry in line {i + 1}: "{line}"')
                 time_start, time_end, description = col
 
