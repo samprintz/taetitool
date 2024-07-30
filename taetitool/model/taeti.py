@@ -12,19 +12,21 @@ class Taeti:
         self.time_span = time_end - time_start
         self.description = description
         self.issue_id = None
+        self.issue_title = None
         self.issue_description = None
         self.project = None
         self.task = None
 
         if issue:
             self.issue_id = issue.id
+            self.issue_title = issue.title
             self.issue_description = issue.description
             self.project = issue.project
             self.task = issue.task
 
     def __str__(self):
         if self.issue_id:
-            return f'{format_time(self.time_start)} - {format_time(self.time_end)} #{self.issue_id} {self.description}'
+            return f'{format_time(self.time_start)} - {format_time(self.time_end)} #{self.issue_id} {self.issue_title} - {self.description}'
         else:
             return f'{format_time(self.time_start)} - {format_time(self.time_end)} {self.description}'
 

@@ -46,20 +46,29 @@ def format_timedelta_quarterly(time_obj):
     return f'{hours}:{"{:02}".format(int(rounded_minutes))}'
 
 
-def read_project_data(path, default_project, default_task):
-    class DefaultKeyDict(dict):
-        def __init__(self, default_key, *args, **kwargs):
-            self.default_key = default_key
-            super(DefaultKeyDict, self).__init__(*args, **kwargs)
-
-        def __missing__(self, key):
-            issue = self.default_key
-            issue.id = key
-            return issue
-
-    project_data = {}
+def read_issue_titles(path):
+    issue_titles = {}
 
     with open(path, 'r') as file:
+        csv_file = csv.reader(file, delimiter=',')
+        for line in csv_file:
+            try:
+                issue_id = line[0]
+                title = line[1]
+
+            except Exception as e:
+                print(f'Error in {line}')
+                raise e
+
+            issue_titles[issue_id] = title
+
+    return issue_titles
+
+
+def read_project_data(path):
+    project_data = {}
+
+    with (open(path, 'r') as file):
         csv_file = csv.reader(file, delimiter=',')
         for line in csv_file:
             try:
@@ -77,10 +86,48 @@ def read_project_data(path, default_project, default_task):
             except Exception as e:
                 print(f'Error in {line}')
                 raise e
-            project_data[issue_id] = Issue(issue_id, project, task, description)
 
-    default_issue = Issue(None, default_project, default_task, None)
-    return DefaultKeyDict(default_issue, project_data)
+            project_data[issue_id] = {
+                "issue_id": issue_id,
+                "project": project,
+                "task": task,
+                "description": description
+            }
+
+    return project_data
+
+
+def build_issue_dict(issue_titles, project_data, default_project, default_task):
+    class DefaultKeyDict(dict):
+        def __init__(self, default_key, *args, **kwargs):
+            self.default_key = default_key
+            super(DefaultKeyDict, self).__init__(*args, **kwargs)
+
+        def __missing__(self, key):
+            issue = self.default_key
+            issue.id = key
+            return issue
+
+    issue_dict = {}
+
+    for issue_id, issue in project_data.items():
+        if issue_id in issue_titles.keys():
+            issue_dict[issue_id] = Issue(issue_id,
+                                         issue_titles[issue_id],
+                                         issue["project"],
+                                         issue["task"],
+                                         issue["description"])
+
+    for issue_id, issue_title in issue_titles.items():
+        if issue_id not in issue_dict:
+            issue_dict[issue_id] = Issue(issue_id,
+                                         issue_titles[issue_id],
+                                         default_project,
+                                         default_task,
+                                         None)
+
+    default_issue = Issue(None, None, default_project, default_task, None)
+    return DefaultKeyDict(default_issue, issue_dict)
 
 
 def read_taeti_data(path):
@@ -206,7 +253,8 @@ def print_project_group(title, project_group):
 
     for task, task_group in project_group['grouped_taetis'].items():
         if task:
-            print(f'  {format_timedelta(task_group["time"])} {task}')
+            print(
+                f'  {format_timedelta(task_group["time"])} {Style.BOLD}{task}{Style.END}')
 
         for issue_description, issue_description_group in task_group[
             'grouped_taetis'].items():
