@@ -31,4 +31,5 @@ class Taeti:
             return f'{format_time(self.time_start)} - {format_time(self.time_end)} {self.description}'
 
     def __repr__(self):
-        return f'Taeti({self.issue_id}, \'{self.description}\', {format_time(self.time_start)}, {format_time(self.time_end)})'
+        # return f'Taeti({self.issue_id}, \'{self.description}\', {format_time(self.time_start)}, {format_time(self.time_end)})'
+        return f'Taeti(\'{self.time_start}\', \'{self.time_end}\', \'{self.description}\', {self.issue_id})'
