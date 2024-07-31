@@ -111,12 +111,17 @@ def build_issue_dict(issue_titles, project_data, default_project, default_task):
     issue_dict = {}
 
     for issue_id, issue in project_data.items():
+
+        issue_title = None
+
         if issue_id in issue_titles.keys():
-            issue_dict[issue_id] = Issue(issue_id,
-                                         issue_titles[issue_id],
-                                         issue["project"],
-                                         issue["task"],
-                                         issue["description"])
+            issue_title = issue_titles[issue_id]
+
+        issue_dict[issue_id] = Issue(issue_id,
+                                     issue_title,
+                                     issue["project"],
+                                     issue["task"],
+                                     issue["description"])
 
     for issue_id, issue_title in issue_titles.items():
         if issue_id not in issue_dict:
