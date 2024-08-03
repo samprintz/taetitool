@@ -38,24 +38,12 @@ def main():
     default_task = config.get("default", "default_task")
     project_print_order = config.get("output", "project_print_order")
 
-    if not os.path.isfile(issue_title_file_path):
-        print(f'Issue title data file not found: "{issue_title_file_path}"')
-        exit(0)
-
-    if not os.path.isfile(project_data_file_path):
-        print(f'Project data file not found: "{project_data_file_path}"')
-        exit(0)
+    issue_data = util.load_issue_data(issue_title_file_path,
+                                      project_data_file_path,
+                                      default_project,
+                                      default_task)
 
     date = util.parse_date(taeti_file_path)
-
-    issue_titles = util.read_issue_titles(issue_title_file_path)
-    project_data = util.read_project_data(project_data_file_path)
-
-    issue_dict = util.build_issue_dict(issue_titles,
-                                       project_data,
-                                       default_project,
-                                       default_task)
-
     taeti_data = util.read_taeti_data(args.file)
 
     if len(taeti_data) == 0:
@@ -64,7 +52,7 @@ def main():
 
     assignment_rules = util.parse_assignment_rules(config.items('rules'))
 
-    taetis = util.build_taetis(taeti_data, issue_dict)
+    taetis = util.build_taetis(taeti_data, issue_data)
     util.apply_assignment_rules(taetis, assignment_rules)
     grouped_taetis = util.group_taetis(taetis)
     total_times = util.get_total_times(taetis)

@@ -1,6 +1,7 @@
 import csv
-import re
+import os.path
 from datetime import datetime, timedelta
+import re
 
 from taetitool.config import Style
 from taetitool.model.issue import Issue
@@ -44,6 +45,25 @@ def format_timedelta_quarterly(time_obj):
     hours += rounded_minutes // 60
     rounded_minutes %= 60
     return f'{hours}:{"{:02}".format(int(rounded_minutes))}'
+
+
+def load_issue_data(issue_title_file_path, project_data_file_path,
+                    default_project, default_task):
+    if not os.path.isfile(issue_title_file_path):
+        print(f'Issue title data file not found: "{issue_title_file_path}"')
+        exit(0)
+
+    if not os.path.isfile(project_data_file_path):
+        print(f'Project data file not found: "{project_data_file_path}"')
+        exit(0)
+
+    issue_titles = read_issue_titles(issue_title_file_path)
+    project_data = read_project_data(project_data_file_path)
+
+    return build_issue_dict(issue_titles,
+                            project_data,
+                            default_project,
+                            default_task)
 
 
 def read_issue_titles(path):
