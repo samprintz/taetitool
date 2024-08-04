@@ -12,6 +12,17 @@ FILE_NAME_DATE_FORMAT = '%Y%m%d'
 PRINT_DATE_FORMAT = '%A, %d.%m.%Y'
 
 
+class DefaultKeyDict(dict):
+    def __init__(self, default_key, *args, **kwargs):
+        self.default_key = default_key
+        super(DefaultKeyDict, self).__init__(*args, **kwargs)
+
+    def __missing__(self, key):
+        issue = self.default_key
+        issue.id = key
+        return issue
+
+
 def parse_date(path):
     date_string = path.split("/")[-1].split("-")[0]
 
@@ -118,16 +129,6 @@ def read_project_data(path):
 
 
 def build_issue_dict(issue_titles, project_data, default_project, default_task):
-    class DefaultKeyDict(dict):
-        def __init__(self, default_key, *args, **kwargs):
-            self.default_key = default_key
-            super(DefaultKeyDict, self).__init__(*args, **kwargs)
-
-        def __missing__(self, key):
-            issue = self.default_key
-            issue.id = key
-            return issue
-
     issue_dict = {}
 
     for issue_id, issue in project_data.items():

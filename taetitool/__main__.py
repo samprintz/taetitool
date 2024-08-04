@@ -4,6 +4,7 @@ from argparse import ArgumentParser
 from configparser import ConfigParser
 
 import taetitool.util as util
+from taetitool.taeti_aggregator import TaetiAggregator
 
 
 def main():
@@ -38,25 +39,17 @@ def main():
     default_task = config.get("default", "default_task")
     project_print_order = config.get("output", "project_print_order")
 
+    assignment_rules = util.parse_assignment_rules(config.items('rules'))
+
     issue_data = util.load_issue_data(issue_title_file_path,
                                       project_data_file_path,
                                       default_project,
                                       default_task)
 
-    date = util.parse_date(taeti_file_path)
-    taeti_data = util.read_taeti_data(args.file)
+    taeti_aggregator = TaetiAggregator(issue_data, assignment_rules)
+    date, total_times, taetis = taeti_aggregator.process(taeti_file_path)
 
-    if len(taeti_data) == 0:
-        print(f'No taeti records found')
-        exit(0)
-
-    assignment_rules = util.parse_assignment_rules(config.items('rules'))
-
-    taetis = util.build_taetis(taeti_data, issue_data)
-    util.apply_assignment_rules(taetis, assignment_rules)
-    grouped_taetis = util.group_taetis(taetis)
-    total_times = util.get_total_times(taetis)
-    util.print_taetis(date, total_times, grouped_taetis, project_print_order)
+    util.print_taetis(date, total_times, taetis, project_print_order)
 
 
 if __name__ == "__main__":
