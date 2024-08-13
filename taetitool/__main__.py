@@ -37,7 +37,7 @@ def main():
     project_data_file_path = config.get("default", "project_data_file")
     default_project = config.get("default", "default_project")
     default_task = config.get("default", "default_task")
-    project_print_order = config.get("output", "project_print_order")
+    project_print_order = config.get("output", "project_print_order").split(',')
 
     assignment_rules = util.parse_assignment_rules(config.items('rules'))
 
