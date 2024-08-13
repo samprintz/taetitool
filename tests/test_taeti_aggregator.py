@@ -1,5 +1,4 @@
 import unittest
-from datetime import datetime, timedelta
 
 from taetitool.model.issue import Issue
 from taetitool.taeti_aggregator import TaetiAggregator
@@ -58,63 +57,163 @@ class TestTaetiAggretator(unittest.TestCase):
             }
         ]
 
+        expected_taetis = {
+            "Default project": {
+                "time": 4800,
+                "Default task": {
+                    "time": 4800,
+                    "None": {
+                        "time": 4800,
+                        "9987": {
+                            "time": 4800
+                        },
+                        "9123": {
+                            "time": 4800
+                        }
+                    }
+                }
+            },
+            "ACME": {
+                "time": 4800,
+                "Customizing": {
+                    "time": 4800,
+                    "Data import": {
+                        "time": 4800,
+                        "1123": {
+                            "time": 4800
+                        }
+                    },
+                    "Testing": {
+                        "time": 4800,
+                        "1987": {
+                            "time": 4800
+                        }
+                    }
+                }
+            },
+            "None": {
+                "time": 8100,
+                "None": {
+                    "time": 8100,
+                    "None": {
+                        "time": 8100,
+                        "None": {
+                            "time": 8100
+                        }
+                    }
+                }
+            },
+            "Break": {
+                "time": 4500,
+                "Break": {
+                    "time": 4500,
+                    "None": {
+                        "time": 4500,
+                        "None": {
+                            "time": 4500
+                        }
+                    }
+                }
+            },
+            "Internal tasks": {
+                "time": 3000,
+                "Meeting": {
+                    "time": 3000,
+                    "None": {
+                        "time": 3000,
+                        "None": {
+                            "time": 3000
+                        }
+                    }
+                }
+            },
+            "PI Fan AG": {
+                "time": 600,
+                "Remote Support": {
+                    "time": 600,
+                    "None": {
+                        "time": 600,
+                        "3123": {
+                            "time": 600
+                        }
+                    }
+                },
+                "Configuration": {
+                    "time": 600,
+                    "None": {
+                        "time": 600,
+                        "3987": {
+                            "time": 600
+                        }
+                    }
+                }
+            },
+            "Fancy Project": {
+                "time": 4200,
+                "AP02-01 Concept Module A": {
+                    "time": 4200,
+                    "None": {
+                        "time": 4200,
+                        "5123": {
+                            "time": 4200
+                        }
+                    }
+                },
+                "AP02-01 Concept Module B": {
+                    "time": 4200,
+                    "None": {
+                        "time": 4200,
+                        "5124": {
+                            "time": 4200
+                        }
+                    }
+                },
+                "AP02-02 Implementation Module A": {
+                    "time": 4200,
+                    "None": {
+                        "time": 4200,
+                        "5223": {
+                            "time": 4200
+                        }
+                    }
+                },
+                "AP02-02 Implementation Module B": {
+                    "time": 4200,
+                    "None": {
+                        "time": 4200,
+                        "5224": {
+                            "time": 4200
+                        }
+                    }
+                }
+            },
+            "Support": {
+                "time": 2700,
+                "None": {
+                    "time": 2700,
+                    "None": {
+                        "time": 2700,
+                        "7123": {
+                            "time": 2700
+                        },
+                        "7987": {
+                            "time": 2700
+                        }
+                    }
+                }
+            }
+        }
+
         taeti_aggregator = TaetiAggregator(issue_data, assignment_rules)
-        date, total_times, taetis = taeti_aggregator.process(taeti_file_path)
+        taeti_aggretation = taeti_aggregator.process(taeti_file_path)
 
-        self.assertEqual(date, 'Thursday, 15.02.2024')
+        taeti_aggretaion_json = taeti_aggretation.to_json()
 
-        self.assertEqual(total_times[0], datetime(1900, 1, 1, 7, 15))
-        self.assertEqual(total_times[1], datetime(1900, 1, 1, 16, 45))
-        self.assertEqual(total_times[2], timedelta(seconds=34200))
+        self.maxDiff = None
 
-        self.assertListEqual(list(taetis.keys()),
-                             ['Default project', 'ACME', None, 'Break',
-                              'Internal tasks', 'PI Fan AG', 'Fancy Project',
-                              'Support'])
-
-        self.assertEqual(
-            len(taetis['Break']['grouped_taetis']['Break']['grouped_taetis'][
-                    None]['grouped_taetis'][None]['taetis']), 5)
-
-        self.assertListEqual(
-            list(taetis['Default project']['grouped_taetis']['Default task'][
-                     'grouped_taetis'][None]['grouped_taetis']),
-            ['9987', '9123'])
-
-        self.assertEqual(
-            len(taetis[None]['grouped_taetis'][None]['grouped_taetis'][None][
-                    'grouped_taetis'][None]['taetis']), 7)
-
-        self.assertEqual(
-            [t.description for t in
-             taetis['Internal tasks']['grouped_taetis']['Meeting'][
-                 'grouped_taetis'][None]['taetis']],
-            ['Daily', 'Product Management Round Table'])
-
-        tasks = list(taetis['Fancy Project']['grouped_taetis'].keys())
-        expected_tasks = ['AP02-01 Concept Module A',
-                          'AP02-01 Concept Module B',
-                          'AP02-02 Implementation Module A',
-                          'AP02-02 Implementation Module B']
-        self.assertListEqual(tasks, expected_tasks)
-
-        descs = [t.description for t in
-                 taetis['Fancy Project']['grouped_taetis'][
-                     'AP02-02 Implementation Module A']['grouped_taetis'][''][
-                     'grouped_taetis'][5223]['taetis']]
-        expected_descs = ['Implementation feature X', 'Refactor feature X']
-        self.assertEqual(descs, expected_descs)
-
-        self.assertListEqual(list(taetis['ACME']['grouped_taetis'].keys()),
-                             ['Customizing'])
-        self.assertListEqual(list(
-            taetis['ACME']['grouped_taetis']['Customizing'][
-                'grouped_taetis'].keys()), ['Data import', 'Testing'])
-
-        self.assertEqual(
-            [t.issue_id for t in
-             taetis['Support']['grouped_taetis']['']['grouped_taetis'][''][
-                 'taetis']], [7123, 7987])
+        self.assertEqual(taeti_aggretaion_json['date'], 'Thursday, 15.02.2024')
+        self.assertEqual(taeti_aggretaion_json['day_total_time'], 34200)
+        self.assertDictEqual(taeti_aggretaion_json['taetis'], expected_taetis)
 
 
 if __name__ == '__main__':

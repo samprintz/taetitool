@@ -1,4 +1,5 @@
 import taetitool.util as util
+from taetitool.taeti_aggregation import TaetiAggregation
 
 
 class TaetiAggregator:
@@ -19,4 +20,4 @@ class TaetiAggregator:
         grouped_taetis = util.group_taetis(taetis)
         total_times = util.get_total_times(taetis)
 
-        return date, total_times, grouped_taetis
+        return TaetiAggregation(date, total_times, grouped_taetis)

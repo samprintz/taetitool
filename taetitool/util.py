@@ -3,7 +3,6 @@ import os.path
 from datetime import datetime, timedelta
 import re
 
-from taetitool.config import Style
 from taetitool.model.issue import Issue
 from taetitool.model.taeti import Taeti
 
@@ -271,47 +270,3 @@ def group_taetis(taetis):
     return group_taetis_by({}, taetis, [
         'project', 'task', 'issue_description', 'issue_id'
     ])
-
-
-def print_project_group(title, project_group):
-    print(
-        f'{Style.UNDERLINE}{format_timedelta_quarterly(project_group["time"])} '
-        f'{title}{Style.END}')
-
-    for task, task_group in project_group['grouped_taetis'].items():
-        if task:
-            print(
-                f'  {format_timedelta(task_group["time"])} {Style.BOLD}{task}{Style.END}')
-
-        for issue_description, issue_description_group in task_group[
-            'grouped_taetis'].items():
-            if issue_description:
-                print(
-                    f'    {format_timedelta(issue_description_group["time"])} '
-                    f'{issue_description}')
-
-            for issue_id, issue_id_group in issue_description_group[
-                'grouped_taetis'].items():
-                if issue_id:
-                    print(f'      {format_timedelta(issue_id_group["time"])} '
-                          f'#{issue_id}')
-
-                for taeti in issue_id_group['taetis']:
-                    print(f'        {Style.GREY}{str(taeti)}{Style.END}')
-
-
-def print_taetis(date, total_times, grouped_taetis, project_print_order):
-    print(f'{Style.BOLD}{date}{Style.END}')
-
-    day_start_time, day_end_time, day_total_time = total_times
-    print(f'{Style.BOLD}{format_time(day_start_time)} - '
-          f'{format_time(day_end_time)}{Style.END} '
-          f'({format_timedelta_quarterly(day_total_time)})\n')
-
-    for project in project_print_order:
-        if project in grouped_taetis:
-            project_group = grouped_taetis.pop(project)
-            print_project_group(project, project_group)
-
-    for project, project_group in grouped_taetis.items():
-        print_project_group(project, project_group)

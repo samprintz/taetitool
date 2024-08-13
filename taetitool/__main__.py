@@ -47,9 +47,8 @@ def main():
                                       default_task)
 
     taeti_aggregator = TaetiAggregator(issue_data, assignment_rules)
-    date, total_times, taetis = taeti_aggregator.process(taeti_file_path)
-
-    util.print_taetis(date, total_times, taetis, project_print_order)
+    taeti_aggretation = taeti_aggregator.process(taeti_file_path)
+    taeti_aggretation.to_string(project_print_order)
 
 
 if __name__ == "__main__":
