@@ -187,9 +187,9 @@ class TestTaetiAggretator(unittest.TestCase):
                     }
                 }
             },
-            "Support": {
+            "External tasks": {
                 "time": 2700,
-                "None": {
+                "Support": {
                     "time": 2700,
                     "None": {
                         "time": 2700,

@@ -229,8 +229,7 @@ def apply_assignment_rules(taetis, rules):
         pattern = re.compile(rule['pattern'])
         for taeti in taetis:
             attribute = getattr(taeti, rule['attribute'])
-            if attribute and pattern.match(
-                    attribute) and taeti.issue_id is None:
+            if attribute and pattern.match(attribute):
                 taeti.project = rule['project']
                 taeti.task = rule['task']
 
