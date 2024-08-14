@@ -166,8 +166,8 @@ def read_taeti_data(path):
     with open(path, 'r') as file:
         for i, line in enumerate(file):
             if len(line.strip()):
-                # split by two or more whitespace characters
-                col = re.split('\\s\\s+', line)
+                # split by one or more whitespace characters
+                col = re.split('\\s+', line.strip(), maxsplit=2)
                 if len(col) != 3:
                     raise Exception(f'Corrupt entry in line {i + 1}: "{line}"')
                 time_start, time_end, description = col
