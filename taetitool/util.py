@@ -1,6 +1,6 @@
 import csv
 import os.path
-from datetime import datetime, timedelta
+from datetime import datetime
 import re
 
 from taetitool.model.issue import Issue
@@ -222,50 +222,3 @@ def build_taetis(taeti_data, project_data):
         taetis.append(taeti)
 
     return taetis
-
-
-def apply_assignment_rules(taetis, rules):
-    for rule in rules:
-        pattern = re.compile(rule['pattern'])
-        for taeti in taetis:
-            attribute = getattr(taeti, rule['attribute'])
-            if attribute and pattern.match(attribute):
-                taeti.project = rule['project']
-                taeti.task = rule['task']
-
-
-def get_total_times(taetis):
-    first_entry = sorted(taetis, key=lambda t: t.time_start)[0]
-    last_entry = sorted(taetis, key=lambda t: t.time_start, reverse=True)[0]
-    day_total_time = last_entry.time_end - first_entry.time_start
-    return first_entry.time_start, last_entry.time_end, day_total_time
-
-
-def group_taetis_by(grouped_taetis, taetis, attributes):
-    attribute, *attributes = attributes
-
-    for taeti in taetis:
-        key = getattr(taeti, attribute)
-        if key not in grouped_taetis:
-            grouped_taetis[key] = {
-                'taetis': [],
-                'grouped_taetis': {},
-                'time': timedelta(0)
-            }
-
-        grouped_taetis[key]['taetis'].append(taeti)
-        grouped_taetis[key]['time'] = (grouped_taetis[key]['time']
-                                       + taeti.time_span)
-
-    if len(attributes) > 0:
-        for key, group in grouped_taetis.items():
-            group_taetis_by(group['grouped_taetis'], group['taetis'],
-                            attributes)
-
-    return grouped_taetis
-
-
-def group_taetis(taetis):
-    return group_taetis_by({}, taetis, [
-        'project', 'task', 'issue_description', 'issue_id'
-    ])
