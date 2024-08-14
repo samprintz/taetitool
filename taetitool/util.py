@@ -83,9 +83,13 @@ def load_issue_data(issue_title_file_path, project_data_file_path,
 
 def read_issue_titles(path):
     issue_titles = {}
+    delimiter = ','
+
+    if path.endswith('.tsv'):
+        delimiter = '\t'
 
     with open(path, 'r') as file:
-        csv_file = csv.reader(file, delimiter=',')
+        csv_file = csv.reader(file, delimiter=delimiter)
         for line in csv_file:
             try:
                 issue_id = line[0]
@@ -102,9 +106,13 @@ def read_issue_titles(path):
 
 def read_project_data(path):
     project_data = {}
+    delimiter = ','
+
+    if path.endswith('.tsv'):
+        delimiter = '\t'
 
     with (open(path, 'r') as file):
-        csv_file = csv.reader(file, delimiter=',')
+        csv_file = csv.reader(file, delimiter=delimiter)
         for line in csv_file:
             try:
                 issue_id = line[0]
