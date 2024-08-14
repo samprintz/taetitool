@@ -65,10 +65,10 @@ class TestTaetiAggretator(unittest.TestCase):
                     "None": {
                         "time": 4800,
                         "9987": {
-                            "time": 4800
+                            "time": 3000
                         },
                         "9123": {
-                            "time": 4800
+                            "time": 1800
                         }
                     }
                 }
@@ -78,15 +78,15 @@ class TestTaetiAggretator(unittest.TestCase):
                 "Customizing": {
                     "time": 4800,
                     "Data import": {
-                        "time": 4800,
+                        "time": 2100,
                         "1123": {
-                            "time": 4800
+                            "time": 2100
                         }
                     },
                     "Testing": {
-                        "time": 4800,
+                        "time": 2700,
                         "1987": {
-                            "time": 4800
+                            "time": 2700
                         }
                     }
                 }
@@ -130,20 +130,20 @@ class TestTaetiAggretator(unittest.TestCase):
             "PI Fan AG": {
                 "time": 600,
                 "Remote Support": {
-                    "time": 600,
+                    "time": 300,
                     "None": {
-                        "time": 600,
+                        "time": 300,
                         "3123": {
-                            "time": 600
+                            "time": 300
                         }
                     }
                 },
                 "Configuration": {
-                    "time": 600,
+                    "time": 300,
                     "None": {
-                        "time": 600,
+                        "time": 300,
                         "3987": {
-                            "time": 600
+                            "time": 300
                         }
                     }
                 }
@@ -151,38 +151,38 @@ class TestTaetiAggretator(unittest.TestCase):
             "Fancy Project": {
                 "time": 4200,
                 "AP02-01 Concept Module A": {
-                    "time": 4200,
+                    "time": 1500,
                     "None": {
-                        "time": 4200,
+                        "time": 1500,
                         "5123": {
-                            "time": 4200
+                            "time": 1500
                         }
                     }
                 },
                 "AP02-01 Concept Module B": {
-                    "time": 4200,
+                    "time": 1200,
                     "None": {
-                        "time": 4200,
+                        "time": 1200,
                         "5124": {
-                            "time": 4200
+                            "time": 1200
                         }
                     }
                 },
                 "AP02-02 Implementation Module A": {
-                    "time": 4200,
+                    "time": 900,
                     "None": {
-                        "time": 4200,
+                        "time": 900,
                         "5223": {
-                            "time": 4200
+                            "time": 900
                         }
                     }
                 },
                 "AP02-02 Implementation Module B": {
-                    "time": 4200,
+                    "time": 600,
                     "None": {
-                        "time": 4200,
+                        "time": 600,
                         "5224": {
-                            "time": 4200
+                            "time": 600
                         }
                     }
                 }
@@ -194,10 +194,10 @@ class TestTaetiAggretator(unittest.TestCase):
                     "None": {
                         "time": 2700,
                         "7123": {
-                            "time": 2700
+                            "time": 1800
                         },
                         "7987": {
-                            "time": 2700
+                            "time": 900
                         }
                     }
                 }
