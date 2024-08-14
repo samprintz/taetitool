@@ -33,7 +33,12 @@ def parse_date(path):
 
 
 def parse_time(time_str):
-    return datetime.strptime(time_str, '%H:%M')
+    if re.match('\\d{3,4}', time_str):
+        if len(time_str) == 3:
+            time_str = '0' + time_str
+        return datetime.strptime(time_str, '%H%M')
+    else:
+        return datetime.strptime(time_str, '%H:%M')
 
 
 def format_time(time_obj):
