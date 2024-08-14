@@ -21,7 +21,7 @@ class TaetiAggregator:
         taetis = util.build_taetis(taeti_data, self.issue_data)
         self.apply_assignment_rules(taetis, self.assignment_rules)
         grouped_taetis = self.group_taetis(taetis)
-        total_times = self.get_total_times(taetis)
+        total_times = self.calc_total_times(taetis)
 
         return TaetiAggregation(date, total_times, grouped_taetis)
 
@@ -34,11 +34,16 @@ class TaetiAggregator:
                     taeti.project = rule['project']
                     taeti.task = rule['task']
 
-    def get_total_times(self, taetis):
+    def calc_total_times(self, taetis):
         first_entry = sorted(taetis, key=lambda t: t.time_start)[0]
         last_entry = sorted(taetis, key=lambda t: t.time_start, reverse=True)[0]
         day_total_time = last_entry.time_end - first_entry.time_start
         return first_entry.time_start, last_entry.time_end, day_total_time
+
+    def group_taetis(self, taetis):
+        return self.group_taetis_by({}, taetis, [
+            'project', 'task', 'issue_description', 'issue_id'
+        ])
 
     def group_taetis_by(self, grouped_taetis, taetis, attributes):
         attribute, *attributes = attributes
@@ -62,8 +67,3 @@ class TaetiAggregator:
                                      attributes)
 
         return grouped_taetis
-
-    def group_taetis(self, taetis):
-        return self.group_taetis_by({}, taetis, [
-            'project', 'task', 'issue_description', 'issue_id'
-        ])
