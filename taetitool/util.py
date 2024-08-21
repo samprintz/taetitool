@@ -33,7 +33,12 @@ def parse_date(path):
 
 
 def parse_time(time_str):
-    return datetime.strptime(time_str, '%H:%M')
+    if re.match('\\d{3,4}', time_str):
+        if len(time_str) == 3:
+            time_str = '0' + time_str
+        return datetime.strptime(time_str, '%H%M')
+    else:
+        return datetime.strptime(time_str, '%H:%M')
 
 
 def format_time(time_obj):
@@ -78,9 +83,13 @@ def load_issue_data(issue_title_file_path, project_data_file_path,
 
 def read_issue_titles(path):
     issue_titles = {}
+    delimiter = ','
+
+    if path.endswith('.tsv'):
+        delimiter = '\t'
 
     with open(path, 'r') as file:
-        csv_file = csv.reader(file, delimiter=',')
+        csv_file = csv.reader(file, delimiter=delimiter)
         for line in csv_file:
             try:
                 issue_id = line[0]
@@ -97,9 +106,13 @@ def read_issue_titles(path):
 
 def read_project_data(path):
     project_data = {}
+    delimiter = ','
+
+    if path.endswith('.tsv'):
+        delimiter = '\t'
 
     with (open(path, 'r') as file):
-        csv_file = csv.reader(file, delimiter=',')
+        csv_file = csv.reader(file, delimiter=delimiter)
         for line in csv_file:
             try:
                 issue_id = line[0]
@@ -161,8 +174,8 @@ def read_taeti_data(path):
     with open(path, 'r') as file:
         for i, line in enumerate(file):
             if len(line.strip()):
-                # split by two or more whitespace characters
-                col = re.split('\\s\\s+', line)
+                # split by one or more whitespace characters
+                col = re.split('\\s+', line.strip(), maxsplit=2)
                 if len(col) != 3:
                     raise Exception(f'Corrupt entry in line {i + 1}: "{line}"')
                 time_start, time_end, description = col
