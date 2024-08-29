@@ -25,24 +25,28 @@ class TaetiAggregation:
                 'title': f'{Style.UNDERLINE}%s %s{Style.END}',
                 'taeti': None,
                 'indent': 0,
+                'print_empty_title': True,
             },
             {
                 'quarterly_time': False,
                 'title': f'%s {Style.BOLD}%s{Style.END}',
                 'taeti': None,
                 'indent': 1,
+                'print_empty_title': False,
             },
             {
                 'quarterly_time': False,
                 'title': f'%s %s',
                 'taeti': None,
                 'indent': 2,
+                'print_empty_title': False,
             },
             {
                 'quarterly_time': False,
                 'title': f'%s #%s',
                 'taeti': f'{Style.GREY}%s{Style.END}',
                 'indent': 3,
+                'print_empty_title': False,
             }
         ]
 
@@ -64,7 +68,8 @@ class TaetiAggregation:
         if group_format_def['quarterly_time']:
             time = util.format_timedelta_quarterly(group['time'])
 
-        if title and group_format_def['title']:
+        if (title or group_format_def['print_empty_title']) and \
+                group_format_def['title']:
             print(indent + group_format_def['title'] % (time, title))
 
         for subgroup_title, subgroup in group['grouped_taetis'].items():
