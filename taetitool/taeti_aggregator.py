@@ -30,7 +30,10 @@ class TaetiAggregator:
             pattern = re.compile(rule['pattern'])
             for taeti in taetis:
                 attribute = getattr(taeti, rule['attribute'])
-                if attribute and pattern.match(attribute):
+                is_match = attribute and pattern.match(attribute)
+                is_project_rule = rule['attribute'] == 'project'
+                has_issue_id = taeti.issue_id is None
+                if is_match and (is_project_rule or has_issue_id):
                     taeti.project = rule['project']
                     taeti.task = rule['task']
 
