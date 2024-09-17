@@ -28,18 +28,18 @@ class TaetiAggregation:
                 'print_empty_title': True,
             },
             {
-                'quarterly_time': False,
+                'quarterly_time': True,
                 'title': f'%s {Style.BOLD}%s{Style.END}',
                 'taeti': None,
                 'indent': 1,
-                'print_empty_title': False,
+                'print_empty_title': True,
             },
             {
                 'quarterly_time': False,
                 'title': f'%s %s',
                 'taeti': None,
                 'indent': 2,
-                'print_empty_title': False,
+                'print_empty_title': True,
             },
             {
                 'quarterly_time': False,
