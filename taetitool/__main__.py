@@ -11,10 +11,14 @@ def main():
     parser = ArgumentParser(prog='taeti',
                             description='Taeti Evaluation Tool')
 
+    default_config_path = os.path.join(os.path.expanduser("~"), ".config",
+                                       "taetitool",
+                                       "config.ini")
+
     parser.add_argument("file",
                         help="Taeti file to evaluate")
     parser.add_argument("--config",
-                        default="~/.config/taetitool/config.ini",
+                        default=default_config_path,
                         help="configuration file")
 
     args = parser.parse_args()
