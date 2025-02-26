@@ -42,6 +42,7 @@ def main():
     default_project = config.get("default", "default_project")
     default_task = config.get("default", "default_task")
     project_print_order = config.get("output", "project_print_order").split(',')
+    enable_text_styling = config.getboolean("output", "enable_text_styling")
 
     assignment_rules = util.parse_assignment_rules(config.items('rules'))
 
@@ -52,7 +53,7 @@ def main():
 
     taeti_aggregator = TaetiAggregator(issue_data, assignment_rules)
     taeti_aggretation = taeti_aggregator.process(taeti_file_path)
-    taeti_aggretation.to_string(project_print_order)
+    taeti_aggretation.to_string(project_print_order, enable_text_styling)
 
 
 if __name__ == "__main__":

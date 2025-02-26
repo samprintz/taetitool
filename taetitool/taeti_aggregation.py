@@ -11,25 +11,27 @@ class TaetiAggregation:
         self.day_start_time, self.day_end_time, self.day_total_time = total_times
         self.taetis = taetis
 
-    def to_string(self, project_print_order):
-        print(f'{Style.BOLD}{self.date}{Style.END}')
+    def to_string(self, project_print_order, enable_text_styling):
+        style = Style(enable_text_styling)
 
-        print(f'{Style.BOLD}{util.format_time(self.day_start_time)} - '
-              f'{util.format_time(self.day_end_time)}{Style.END} '
+        print(style.bold(self.date))
+
+        print(style.bold(f'{util.format_time(self.day_start_time)} - '),
+              style.bold(f'{util.format_time(self.day_end_time)} '),
               f'({util.format_timedelta_quarterly(self.day_total_time)})\n')
 
         # TODO make configurable
         group_format_defs = [
             {
                 'quarterly_time': True,
-                'title': f'{Style.UNDERLINE}%s %s{Style.END}',
+                'title': style.underline('%s %s'),
                 'taeti': None,
                 'indent': 0,
                 'print_empty_title': True,
             },
             {
                 'quarterly_time': True,
-                'title': f'%s {Style.BOLD}%s{Style.END}',
+                'title': f'%s {style.bold("%s")}',
                 'taeti': None,
                 'indent': 1,
                 'print_empty_title': True,
@@ -44,7 +46,7 @@ class TaetiAggregation:
             {
                 'quarterly_time': False,
                 'title': f'%s #%s',
-                'taeti': f'{Style.GREY}%s{Style.END}',
+                'taeti': style.grey('%s'),
                 'indent': 3,
                 'print_empty_title': False,
             }
