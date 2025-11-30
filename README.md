@@ -3,13 +3,13 @@
 ## Installation
 
 ```sh
-python setup.py install
+pipx install .
 ```
 
 For development use:
 
 ```sh
-python setup.py develop
+pipx install --editable .
 ```
 
 ## Configuration
