@@ -22,14 +22,21 @@ class DefaultKeyDict(dict):
         return issue
 
 
-def parse_date(path):
+def parse_file_date(path):
     date_string = path.split("/")[-1].split("-")[0]
 
     try:
-        parsed_date = datetime.strptime(date_string, FILE_NAME_DATE_FORMAT)
-        return parsed_date.strftime(PRINT_DATE_FORMAT)
+        return datetime.strptime(date_string, FILE_NAME_DATE_FORMAT).date()
     except ValueError:
         return None
+
+
+def parse_date(path):
+    parsed_date = parse_file_date(path)
+
+    if parsed_date is None:
+        return None
+    return parsed_date.strftime(PRINT_DATE_FORMAT)
 
 
 def parse_time(time_str):

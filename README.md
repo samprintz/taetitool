@@ -36,3 +36,18 @@ that can be used to provide information about issues:
 ```sh
 taetitool 20240215.taeti
 ```
+
+### Export attendance
+
+`--export-attendance` prints the attendance of the day as JSON:
+contiguous entries are merged into blocks,
+entries matching the rule named `break` are left out.
+Overlapping entries are reported as error.
+
+```sh
+taetitool --export-attendance 20240215.taeti
+```
+
+```json
+{"date": "2024-02-15", "blocks": [{"start": "07:15", "end": "08:05"}, ...]}
+```

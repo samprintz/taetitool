@@ -1,6 +1,7 @@
 from datetime import timedelta
 import re
 
+import taetitool.attendance as attendance
 import taetitool.util as util
 from taetitool.taeti_aggregation import TaetiAggregation
 
@@ -24,6 +25,17 @@ class TaetiAggregator:
         total_times = self.calc_total_times(taetis)
 
         return TaetiAggregation(date, total_times, grouped_taetis)
+
+    def export_attendance(self, taeti_file_path):
+        taeti_data = util.read_taeti_data(taeti_file_path)
+        taetis = util.build_taetis(taeti_data, self.issue_data)
+        self.apply_assignment_rules(taetis, self.assignment_rules)
+
+        break_project = attendance.find_break_project(self.assignment_rules)
+        blocks = attendance.build_attendance_blocks(taetis, break_project)
+        date = util.parse_file_date(taeti_file_path)
+
+        return attendance.attendance_to_json(date, blocks)
 
     def apply_assignment_rules(self, taetis, rules):
         for rule in rules:

@@ -1,5 +1,7 @@
 #!/usr/bin/env python
+import json
 import os.path
+import sys
 from argparse import ArgumentParser
 from configparser import ConfigParser
 
@@ -20,6 +22,10 @@ def main():
     parser.add_argument("--config",
                         default=default_config_path,
                         help="configuration file")
+    parser.add_argument("--export-attendance",
+                        action="store_true",
+                        help="print the attendance blocks (work time "
+                             "without breaks) as JSON")
 
     args = parser.parse_args()
 
@@ -52,6 +58,16 @@ def main():
                                       default_task)
 
     taeti_aggregator = TaetiAggregator(issue_data, assignment_rules)
+
+    if args.export_attendance:
+        try:
+            attendance = taeti_aggregator.export_attendance(taeti_file_path)
+        except ValueError as e:
+            print(f'Error: {e}', file=sys.stderr)
+            exit(1)
+        print(json.dumps(attendance))
+        return
+
     taeti_aggretation = taeti_aggregator.process(taeti_file_path)
     taeti_aggretation.to_string(project_print_order, enable_text_styling)
 
